@@ -8,6 +8,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +31,7 @@ public class GreetingClient {
             case "greet": doGreet(channel); break;
             case "greet_many_times": doGreetManyTimes(channel); break;
             case "long_greet": doLongGreet(channel); break;
+            case "greet_everyone": doGreetEveryone(channel); break;
             default:
                 System.out.println("Invalid Keyword: " + args[0]);
         }
@@ -90,6 +92,34 @@ public class GreetingClient {
         for(String name : names){
             stream.onNext(GreetingRequest.newBuilder().setFirstName(name).build());
         }
+
+        stream.onCompleted();
+        latch.await(3, TimeUnit.SECONDS);
+    }
+
+    private static void doGreetEveryone(ManagedChannel channel) throws InterruptedException {
+        System.out.println("Enter doGreetEveryone");
+        GreetingServiceGrpc.GreetingServiceStub stub = GreetingServiceGrpc.newStub(channel);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<GreetingRequest> stream = stub.greetEveryone(new StreamObserver<GreetingResponse>() {
+            @Override
+            public void onNext(GreetingResponse response) {
+                System.out.println(response.getResult());
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        });
+
+        Arrays.asList("Bruno", "Enzo", "Iris").forEach(name ->
+            stream.onNext(GreetingRequest.newBuilder().setFirstName(name).build())
+        );
 
         stream.onCompleted();
         latch.await(3, TimeUnit.SECONDS);

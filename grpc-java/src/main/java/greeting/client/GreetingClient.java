@@ -21,6 +21,7 @@ public class GreetingClient {
 
         switch (args[0]){
             case "greet": doGreet(channel); break;
+            case "greet_many_times": doGreetManyTimes(channel); break;
             default:
                 System.out.println("Invalid Keyword: " + args[0]);
         }
@@ -35,6 +36,15 @@ public class GreetingClient {
         GreetingResponse response = stub.greet(GreetingRequest.newBuilder().setFirstName("Bruno").build());
 
         System.out.println("Greeting: " + response.getResult());
+    }
+
+    private static void doGreetManyTimes(ManagedChannel channel) {
+        System.out.println("Enter doGreetManyTimes");
+        GreetingServiceGrpc.GreetingServiceBlockingStub stub = GreetingServiceGrpc.newBlockingStub(channel);
+
+        stub.greetManyTimes(GreetingRequest.newBuilder().setFirstName("Bruno").build()).forEachRemaining(response -> {
+            System.out.println(response.getResult());
+        });
     }
 
 }

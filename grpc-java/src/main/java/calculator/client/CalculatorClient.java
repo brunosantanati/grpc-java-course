@@ -1,15 +1,17 @@
 package calculator.client;
 
-import com.proto.calculator.CalculatorServiceGrpc;
-import com.proto.calculator.PrimeRequest;
-import com.proto.calculator.SumRequest;
-import com.proto.calculator.SumResponse;
+import com.proto.calculator.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+
+import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class CalculatorClient {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         if(args.length == 0){
             System.out.println("Need one argument to work");
         }
@@ -22,6 +24,7 @@ public class CalculatorClient {
         switch (args[0]){
             case "sum": doSum(channel); break;
             case "primes": doPrimes(channel); break;
+            case "avg": doAvg(channel); break;
             default:
                 System.out.println("Invalid Keyword: " + args[0]);
         }
@@ -45,6 +48,34 @@ public class CalculatorClient {
         stub.primes(PrimeRequest.newBuilder().setNumber(567890).build()).forEachRemaining(response -> {
             System.out.println(response.getPrimeFactor());
         });
+    }
+
+    private static void doAvg(ManagedChannel channel) throws InterruptedException {
+        System.out.println("Enter doAvg");
+        CalculatorServiceGrpc.CalculatorServiceStub stub = CalculatorServiceGrpc.newStub(channel);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<AvgRequest> stream = stub.avg(new StreamObserver<AvgResponse>() {
+            @Override
+            public void onNext(AvgResponse value) {
+                System.out.println("Avg = " + value.getResult());
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        });
+
+        Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).forEach(number ->
+            stream.onNext(AvgRequest.newBuilder().setNumber(number).build())
+        );
+
+        stream.onCompleted();
+        latch.await(3, TimeUnit.SECONDS);
     }
 
 }

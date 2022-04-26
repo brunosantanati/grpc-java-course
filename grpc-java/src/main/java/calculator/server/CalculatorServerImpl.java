@@ -29,4 +29,30 @@ public class CalculatorServerImpl extends CalculatorServiceGrpc.CalculatorServic
         responseObserver.onCompleted();
     }
 
+    @Override
+    public StreamObserver<AvgRequest> avg(StreamObserver<AvgResponse> responseObserver){
+        return new StreamObserver<AvgRequest>() {
+            int sum = 0;
+            int count = 0;
+            @Override
+            public void onNext(AvgRequest value) {
+                sum += value.getNumber();
+                ++count;
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                responseObserver.onError(t);
+            }
+
+            @Override
+            public void onCompleted() {
+                responseObserver.onNext(AvgResponse.newBuilder().setResult(
+                        (double) sum / count
+                ).build());
+                responseObserver.onCompleted();
+            }
+        };
+    }
+
 }

@@ -25,6 +25,7 @@ public class CalculatorClient {
             case "sum": doSum(channel); break;
             case "primes": doPrimes(channel); break;
             case "avg": doAvg(channel); break;
+            case "max": doMax(channel); break;
             default:
                 System.out.println("Invalid Keyword: " + args[0]);
         }
@@ -72,6 +73,34 @@ public class CalculatorClient {
 
         Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).forEach(number ->
             stream.onNext(AvgRequest.newBuilder().setNumber(number).build())
+        );
+
+        stream.onCompleted();
+        latch.await(3, TimeUnit.SECONDS);
+    }
+
+    private static void doMax(ManagedChannel channel) throws InterruptedException {
+        System.out.println("Enter doMax");
+        CalculatorServiceGrpc.CalculatorServiceStub stub = CalculatorServiceGrpc.newStub(channel);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<MaxRequest> stream = stub.max(new StreamObserver<MaxResponse>() {
+            @Override
+            public void onNext(MaxResponse value) {
+                System.out.println("Max = " + value.getMax());
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        });
+
+        Arrays.asList(1, 5, 3, 6, 2, 20).forEach(number ->
+                stream.onNext(MaxRequest.newBuilder().setNumber(number).build())
         );
 
         stream.onCompleted();

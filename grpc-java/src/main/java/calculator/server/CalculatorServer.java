@@ -74,6 +74,28 @@ Example:
 The client will send a stream of number (1,2,3,4) and the server will respond with (2.5), because (1+2+3+4)/4 = 2.5
 
 Good luck!
+
+======================================================================================
+
+[Exercise] Max API
+
+Now it is your turn to write code!
+
+In this exercise, your goal is to implement a Max RPC Bi-Directional Streaming API in a CalculatorService:
+
+    The function takes a stream of Request message that has one integer, and returns a stream of Responses that represent the current maximum between all these integers
+
+    Remember to first implement the service definition in a .proto file, alongside the RPC messages
+
+    Implement the Server code first
+
+    Test the server code by implementing the Client
+
+Example:
+
+The client will send a stream of number (1,5,3,6,2,20) and the server will respond with a stream of (1,5,6,20)
+
+Good luck!
  */
 
 public class CalculatorServer {

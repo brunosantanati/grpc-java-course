@@ -2,6 +2,7 @@
 
 ## Useful Links  
 
+[Original course repo](https://github.com/Clement-Jean/grpc-java-course)  
 [gRPC Server Reflection Tutorial](https://github.com/grpc/grpc-java/blob/master/documentation/server-reflection-tutorial.md)  
 [Evans GitHub page](https://github.com/ktr0731/evans)  
 [Evans installation files](https://github.com/ktr0731/evans/releases)  

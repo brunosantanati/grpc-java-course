@@ -21,7 +21,7 @@ and download the version that matches your OS (in my case evans_linux_amd64.tar.
 
 ```
 evans
-evans --host localhost --port 50052 --reflection repl
+evans --host localhost --port 50052 --reflection repl (type exit to quit)
 show package
 show service
 show message

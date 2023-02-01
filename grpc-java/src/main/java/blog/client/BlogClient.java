@@ -28,7 +28,8 @@ public class BlogClient {
 
         if(blogId == null)
             return;
-        //...
+
+        readBlog(stub, blogId);
     }
 
     private static BlogId createBlog(BlogServiceGrpc.BlogServiceBlockingStub stub) {
@@ -47,6 +48,16 @@ public class BlogClient {
             System.out.println("Couldn't create the blog");
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private static void readBlog(BlogServiceGrpc.BlogServiceBlockingStub stub, BlogId blogId) {
+        try {
+            Blog readResponse = stub.readBlog(blogId);
+            System.out.println("Blog read: " + readResponse);
+        } catch (StatusRuntimeException e) {
+            System.out.println("Couldn't read the blog");
+            e.printStackTrace();
         }
     }
 

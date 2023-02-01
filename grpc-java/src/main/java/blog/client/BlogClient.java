@@ -1,5 +1,6 @@
 package blog.client;
 
+import com.google.protobuf.Empty;
 import com.proto.blog.Blog;
 import com.proto.blog.BlogId;
 import com.proto.blog.BlogServiceGrpc;
@@ -31,6 +32,7 @@ public class BlogClient {
 
         readBlog(stub, blogId);
         updateBlog(stub, blogId);
+        listBlogs(stub);
     }
 
     private static BlogId createBlog(BlogServiceGrpc.BlogServiceBlockingStub stub) {
@@ -77,6 +79,10 @@ public class BlogClient {
             System.out.println("Couldn't update the blog");
             e.printStackTrace();
         }
+    }
+
+    private static void listBlogs(BlogServiceGrpc.BlogServiceBlockingStub stub) {
+        stub.listBlogs(Empty.getDefaultInstance()).forEachRemaining(System.out::println);
     }
 
 }

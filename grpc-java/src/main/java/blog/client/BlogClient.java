@@ -33,6 +33,7 @@ public class BlogClient {
         readBlog(stub, blogId);
         updateBlog(stub, blogId);
         listBlogs(stub);
+        deleteBlog(stub, blogId);
     }
 
     private static BlogId createBlog(BlogServiceGrpc.BlogServiceBlockingStub stub) {
@@ -83,6 +84,16 @@ public class BlogClient {
 
     private static void listBlogs(BlogServiceGrpc.BlogServiceBlockingStub stub) {
         stub.listBlogs(Empty.getDefaultInstance()).forEachRemaining(System.out::println);
+    }
+
+    private static void deleteBlog(BlogServiceGrpc.BlogServiceBlockingStub stub, BlogId blogId) {
+        try {
+            stub.deleteBlog(blogId);
+            System.out.println("Blog deleted: " + blogId.getId());
+        } catch (StatusRuntimeException e) {
+            System.out.println("The blog couldn't be deleted");
+            e.printStackTrace();
+        }
     }
 
 }
